@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -38,7 +39,9 @@ public class ActorService {
     public Page<Actor> list(Pageable pageable, Specification<Actor> filter) {
         return repository.findAll(filter, pageable);
     }
-
+    public List<Actor> listAll() {
+        return repository.findAll();
+    }
     public int count() {
         return (int) repository.count();
     }

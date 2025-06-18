@@ -1,0 +1,92 @@
+<!-- Created with Jaspersoft Studio version 7.0.3.final using JasperReports Library version 7.0.3-41034ca841d452f3305ba55b9042260aaa1ab5dd  -->
+<jasperReport name="actor_report" language="java" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3a84e845-7dbb-4399-948d-2205a23a118e">
+    <property name="com.jaspersoft.studio.data.sql.tables" value="YWN0b3IgLDE1LDE1LDBhZWZhMzNhLTFlMTEtNDRjYS04ZGViLWQ5N2IzY2ZiMzRiYzs="/>
+    <property name="com.jaspersoft.studio.data.defaultdataadapter" value="dvdrental"/>
+    <query language="SQL"><![CDATA[SELECT *
+FROM actor]]></query>
+    <field name="actorId" class="java.lang.Integer">
+        <property name="com.jaspersoft.studio.field.name" value="actor_id"/>
+        <property name="com.jaspersoft.studio.field.label" value="actor_id"/>
+        <property name="com.jaspersoft.studio.field.tree.path" value="actor"/>
+    </field>
+    <field name="firstName" class="java.lang.String">
+        <property name="com.jaspersoft.studio.field.name" value="first_name"/>
+        <property name="com.jaspersoft.studio.field.label" value="first_name"/>
+        <property name="com.jaspersoft.studio.field.tree.path" value="actor"/>
+    </field>
+    <field name="lastName" class="java.lang.String">
+        <property name="com.jaspersoft.studio.field.name" value="last_name"/>
+        <property name="com.jaspersoft.studio.field.label" value="last_name"/>
+        <property name="com.jaspersoft.studio.field.tree.path" value="actor"/>
+    </field>
+    <field name="lastUpdate" class="java.time.LocalDateTime">
+        <property name="com.jaspersoft.studio.field.name" value="last_update"/>
+        <property name="com.jaspersoft.studio.field.label" value="last_update"/>
+        <property name="com.jaspersoft.studio.field.tree.path" value="actor"/>
+    </field>
+    <background/>
+    <title height="72">
+        <element kind="frame" uuid="98f94bba-ce63-4bd9-8bd2-b5c0c8a4907c" mode="Opaque" x="-20" y="-20" width="595" height="92" backcolor="#006699">
+            <element kind="staticText" uuid="576f4dcc-cb29-4af2-a4a3-19ff74fcb8fe" x="20" y="20" width="380" height="60" forecolor="#FFFFFF" fontSize="20.0" bold="true">
+                <text><![CDATA[ACTORES DE DVDRENTAL]]></text>
+            </element>
+            <element kind="staticText" uuid="15cbc971-5cda-45a0-a4da-e0aad27fc334" x="395" y="43" width="180" height="20" forecolor="#FFFFFF" fontSize="14.0" bold="false" hTextAlign="Right">
+                <text><![CDATA[Add a description here]]></text>
+            </element>
+        </element>
+    </title>
+    <pageHeader height="13"/>
+    <columnHeader height="21">
+        <element kind="line" uuid="c33eacba-cf6f-4294-acde-96e2f7e107e0" x="-20" y="20" width="595" height="1" forecolor="#666666"/>
+        <element kind="staticText" uuid="be0f0dba-4d72-4659-8c1b-70b0f51880f2" mode="Opaque" x="0" y="0" width="138" height="20" forecolor="#006699" backcolor="#E6E6E6" fontSize="14.0" bold="true" hTextAlign="Center">
+            <text><![CDATA[actor_id]]></text>
+            <property name="com.jaspersoft.studio.spreadsheet.connectionID" value="48e2b2cb-6517-43f7-b77f-e15efa8f66a5"/>
+        </element>
+        <element kind="staticText" uuid="0ffe6614-81f3-4b11-882a-f4ba4769af87" mode="Opaque" x="138" y="0" width="138" height="20" forecolor="#006699" backcolor="#E6E6E6" fontSize="14.0" bold="true" hTextAlign="Center">
+            <text><![CDATA[first_name]]></text>
+            <property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8f0d07bf-7fc0-4d8f-b1ed-1f91b66c3906"/>
+        </element>
+        <element kind="staticText" uuid="489c3a18-0651-4d08-bc14-8fea1b200bed" mode="Opaque" x="276" y="0" width="138" height="20" forecolor="#006699" backcolor="#E6E6E6" fontSize="14.0" bold="true" hTextAlign="Center">
+            <text><![CDATA[last_name]]></text>
+            <property name="com.jaspersoft.studio.spreadsheet.connectionID" value="154c39f9-6cc1-450d-a325-c3707b62dac3"/>
+        </element>
+        <element kind="staticText" uuid="e60ea3c5-2bca-4d9c-8c81-aea68c15b2b1" mode="Opaque" x="414" y="0" width="138" height="20" forecolor="#006699" backcolor="#E6E6E6" fontSize="14.0" bold="true" hTextAlign="Center">
+            <text><![CDATA[last_update]]></text>
+            <property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0d69e34d-9e3c-457d-bf02-09b0b67d0f49"/>
+        </element>
+    </columnHeader>
+    <detail>
+        <band height="20">
+            <element kind="line" uuid="3597fcc5-f931-4ca2-be67-533f44dc52f0" positionType="FixRelativeToBottom" x="0" y="19" width="555" height="1"/>
+            <element kind="textField" uuid="1462ea40-cb89-4dec-9b12-6407356e057a" x="0" y="0" width="138" height="20" fontSize="14.0" textAdjust="StretchHeight">
+                <expression><![CDATA[$F{actorId}]]></expression>
+                <property name="com.jaspersoft.studio.spreadsheet.connectionID" value="48e2b2cb-6517-43f7-b77f-e15efa8f66a5"/>
+            </element>
+            <element kind="textField" uuid="ff212c54-f639-4a6a-8d42-543e7b855f7d" x="138" y="0" width="138" height="20" fontSize="14.0" textAdjust="StretchHeight">
+                <expression><![CDATA[$F{firstName}]]></expression>
+                <property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8f0d07bf-7fc0-4d8f-b1ed-1f91b66c3906"/>
+            </element>
+            <element kind="textField" uuid="fa6df176-f00a-45e3-a756-af8b24e93221" x="276" y="0" width="138" height="20" fontSize="14.0" textAdjust="StretchHeight">
+                <expression><![CDATA[$F{lastName}]]></expression>
+                <property name="com.jaspersoft.studio.spreadsheet.connectionID" value="154c39f9-6cc1-450d-a325-c3707b62dac3"/>
+            </element>
+            <element kind="textField" uuid="2e547b04-cd0b-456f-9ace-5e301a2ea720" x="414" y="0" width="138" height="20" fontSize="14.0" textAdjust="StretchHeight">
+                <expression><![CDATA[$F{lastUpdate}]]></expression>
+                <property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0d69e34d-9e3c-457d-bf02-09b0b67d0f49"/>
+            </element>
+        </band>
+    </detail>
+    <columnFooter/>
+    <pageFooter height="17">
+        <element kind="textField" uuid="b585e25d-f352-4330-bc52-754c6634c0a2" mode="Opaque" x="0" y="4" width="515" height="13" backcolor="#E6E6E6" hTextAlign="Right">
+            <expression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></expression>
+        </element>
+        <element kind="textField" uuid="28e033c8-18da-41bf-bce1-644c5928d82c" mode="Opaque" x="515" y="4" width="40" height="13" backcolor="#E6E6E6" evaluationTime="Report">
+            <expression><![CDATA[" " + $V{PAGE_NUMBER}]]></expression>
+        </element>
+        <element kind="textField" uuid="cc447d82-6012-44a1-ad42-5f478ade3853" x="0" y="4" width="100" height="13" pattern="EEEEE dd MMMMM yyyy">
+            <expression><![CDATA[new java.util.Date()]]></expression>
+        </element>
+    </pageFooter>
+    <summary/>
+</jasperReport>
