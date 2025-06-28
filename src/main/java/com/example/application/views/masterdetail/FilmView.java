@@ -9,6 +9,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
@@ -47,9 +48,7 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 import java.math.BigDecimal;
 import java.time.Year;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -76,11 +75,13 @@ public class FilmView extends Div implements BeforeEnterObserver {
     private IntegerField length;
     private NumberField replacementCost;
     private ComboBox<MpaaRating> rating;
-    private TextField specialFeatures; // Usaremos un TextField para mostrar/editar la lista de strings separada por comas
+    private MultiSelectComboBox<String> specialFeatures; // Cambiado a MultiSelectComboBox
+
 
     // Botones del formulario
     private final Button cancel = new Button("Cancelar");
     private final Button save = new Button("Guardar");
+    private final Button newFilm = new Button("Nueva");
     // private final Button print = new Button("Imprimir"); // Comentado, si necesitas JasperReports, descomenta
 
     // Binder para la entidad Film
@@ -278,24 +279,9 @@ public class FilmView extends Div implements BeforeEnterObserver {
 
         // Mapeo para List<String> (TextField a List<String>)
         binder.forField(specialFeatures)
-                .withConverter(new Converter<String, List<String>>() {
-                    @Override
-                    public Result<List<String>> convertToModel(String value, ValueContext context) {
-                        if (value == null || value.trim().isEmpty()) {
-                            return Result.ok(null);
-                        }
-                        return Result.ok(Arrays.stream(value.split(","))
-                                .map(String::trim)
-                                .filter(s -> !s.isEmpty())
-                                .collect(Collectors.toList()));
-                    }
-
-                    @Override
-                    public String convertToPresentation(List<String> value, ValueContext context) {
-                        return value != null ? String.join(", ", value) : "";
-                    }
-                })
+                .withConverter(new SpecialFeaturesConverter())
                 .bind("specialFeatures");
+
 
 
         // Listeners para los botones
@@ -326,6 +312,11 @@ public class FilmView extends Div implements BeforeEnterObserver {
                 Notification.show("La actualización de datos falló. Verificar que todos los valores son válidos.").addThemeVariants(NotificationVariant.LUMO_ERROR);
             }
         });
+        newFilm.addClickListener(e -> {
+            clearForm();
+            refreshGrid(); // Asegura que no haya ninguna fila seleccionada en el grid
+            UI.getCurrent().navigate(FilmView.class); // Vuelve a la ruta base para limpiar la URL de edición
+        });
 
         // Comentado JasperReports, descomentar si es necesario
         /*
@@ -340,7 +331,23 @@ public class FilmView extends Div implements BeforeEnterObserver {
         });
         */
     }
+    private static class SpecialFeaturesConverter implements Converter<Set<String>, List<String>> {
+        @Override
+        public Result<List<String>> convertToModel(Set<String> presentationValue, ValueContext context) {
+            if (presentationValue == null || presentationValue.isEmpty()) {
+                return Result.ok(null);
+            }
+            return Result.ok(new java.util.ArrayList<>(presentationValue)); // Convertir Set a List
+        }
 
+        @Override
+        public Set<String> convertToPresentation(List<String> modelValue, ValueContext context) {
+            if (modelValue == null || modelValue.isEmpty()) {
+                return new HashSet<>();
+            }
+            return new HashSet<>(modelValue); // Convertir List a Set
+        }
+    }
     // Método llamado antes de entrar a la vista para manejar parámetros de ruta
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
@@ -385,8 +392,13 @@ public class FilmView extends Div implements BeforeEnterObserver {
         rating = new ComboBox<>("Rating");
         rating.setItems(MpaaRating.values()); // Carga todos los valores del enum MpaaRating
         rating.setClearButtonVisible(true);
-        specialFeatures = new TextField("Special Features (comma-separated)");
-        specialFeatures.setPlaceholder("e.g., Trailers,Commentaries");
+        // --- CAMBIO AQUÍ: Usando MultiSelectComboBox para Special Features ---
+        specialFeatures = new MultiSelectComboBox<>("Special Features");
+        // Lista de ejemplo de características. En una aplicación real, esto podría cargarse desde la DB.
+        specialFeatures.setItems("Trailers", "Commentaries", "Deleted Scenes", "Behind the Scenes", "Bloopers", "Interviews");
+        specialFeatures.setPlaceholder("Seleccione características");
+        specialFeatures.setClearButtonVisible(true);
+        // --- FIN DEL CAMBIO ---
 
         formLayout.add(filmIdField, title, description, releaseYear, language,
                 rentalDuration, rentalRate, length, replacementCost, rating, specialFeatures);
@@ -403,8 +415,9 @@ public class FilmView extends Div implements BeforeEnterObserver {
         buttonLayout.setClassName("button-layout");
         cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        newFilm.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         // print.addThemeVariants(ButtonVariant.LUMO_CONTRAST); // Comentado
-        buttonLayout.add(save, cancel); // Quitar print si está comentado
+        buttonLayout.add(save, cancel,newFilm);
         editorLayoutDiv.add(buttonLayout);
     }
 

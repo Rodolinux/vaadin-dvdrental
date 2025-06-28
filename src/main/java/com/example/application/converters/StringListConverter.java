@@ -33,8 +33,15 @@ public class StringListConverter implements AttributeConverter<List<String>, Str
         if (s == null || s.trim().isEmpty()) {
             return null;
         }
+        // Eliminar los corchetes '{' y '}' si están presentes al inicio y al final
+        String cleanedString = s.trim();
+        if (cleanedString.startsWith("{") && cleanedString.endsWith("}")) {
+            cleanedString = cleanedString.substring(1, cleanedString.length() - 1);
+        }
+        // Eliminar comillas simples y dobles
+        cleanedString = cleanedString.replace("\"", "").replace("'", "");
         // Convierte la cadena separada por el delimitador a una lista
-        return Arrays.stream(s.split(LIST_DELIMITER))
+        return Arrays.stream(cleanedString.split(LIST_DELIMITER))
                 .map(String::trim)
                 .filter(item -> !item.isEmpty()) // Elimina posibles cadenas vacías después del trim
                 .collect(Collectors.toList());
