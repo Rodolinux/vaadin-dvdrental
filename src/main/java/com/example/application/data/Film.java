@@ -1,4 +1,6 @@
 package com.example.application.data;
+import com.example.application.converters.MpaaRatingConverter;
+import com.example.application.converters.StringListConverter;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -23,7 +25,7 @@ public class Film {
     private String description;
 
     // Para el tipo 'year' de PostgreSQL, se mapea a java.time.Year
-    // Dependiendo de tu configuración de JPA, podría requerir un conversor
+    // Dependiendo de la configuración de JPA, podría requerir un conversor
     // o anotaciones específicas para manejarlo como un Short/Integer.
     // java.time.Year es semánticamente más correcto.
     @Column(name = "release_year")
@@ -54,11 +56,7 @@ public class Film {
     @Column(name = "last_update", nullable = false)
     private LocalDateTime lastUpdate;
 
-    // Para el tipo array de texto (text[]).
-    // JPA no tiene un mapeo directo para arrays de PostgreSQL.
-    // NECESITARÁS UN AttributeConverter PERSONALIZADO para serializar/deserializar List<String>
-    // a/desde un formato que PostgreSQL pueda entender (ej. String con delimitadores, o JSON).
-    // Ejemplo: @Convert(converter = StringListConverter.class)
+    @Convert(converter = StringListConverter.class)
     @Column(name = "special_features", columnDefinition = "text[]")
     private List<String> specialFeatures;
 

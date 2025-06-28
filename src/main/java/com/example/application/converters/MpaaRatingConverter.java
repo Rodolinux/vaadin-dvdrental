@@ -1,4 +1,4 @@
-package com.example.application.data;
+package com.example.application.converters;
 
 import com.example.application.data.MpaaRating;
 import jakarta.persistence.AttributeConverter;

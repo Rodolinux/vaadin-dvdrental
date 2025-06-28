@@ -1,17 +1,14 @@
 // FilmRepository.java
-package com.example.application.data;
+package com.example.application.repositories;
 
 import com.example.application.data.Film;
 import com.example.application.data.MpaaRating;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.Year;
 import java.util.List;
-
-import java.util.Optional;
 
 // Repositorio de Spring Data JPA para la entidad Film
 @Repository

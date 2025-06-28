@@ -1,7 +1,7 @@
 package com.example.application.services;
 
 import com.example.application.data.Film;
-import com.example.application.data.FilmRepository;
+import com.example.application.repositories.FilmRepository;
 import com.example.application.data.MpaaRating;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +68,7 @@ public class FilmService {
      * @param film La película a guardar/actualizar.
      * @return La película guardada/actualizada.
      */
-    public Film save(Film film) {
+    public Film saveFilm(Film film) {
         // Asegúrate de que lastUpdate no sea nulo si no se maneja por DB,
         // aunque el DDL tiene DEFAULT now() y un trigger.
         if (film.getLastUpdate() == null) {
