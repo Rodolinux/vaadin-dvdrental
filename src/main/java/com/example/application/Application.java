@@ -6,9 +6,12 @@ import com.vaadin.flow.theme.Theme;
 import javax.sql.DataSource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.sql.init.SqlDataSourceScriptDatabaseInitializer;
 import org.springframework.boot.autoconfigure.sql.init.SqlInitializationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
  * The entry point of the Spring Boot application.
@@ -19,6 +22,9 @@ import org.springframework.context.annotation.Bean;
  */
 @SpringBootApplication
 @Theme(value = "my-app")
+//@ComponentScan(basePackages = {"com.example.application"}) // Escanear ambos paquetes base
+@EntityScan(basePackages = {"com.example.application.data"}) // Escanear entidades en ambos lugares
+@EnableJpaRepositories(basePackages = {"com.example.application.repositories"}) // Escanear repositorios en ambos lugares
 public class Application implements AppShellConfigurator {
 
     public static void main(String[] args) {
