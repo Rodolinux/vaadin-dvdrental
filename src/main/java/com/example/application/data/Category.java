@@ -1,13 +1,7 @@
 package com.example.application.data;
 
 import jakarta.persistence.*;
-// Language.java (Clase de entidad para la tabla 'category' - necesaria para la FK)
 
-
-import jakarta.persistence.*;
-
-// Esta es una entidad de ejemplo para la tabla 'category'
-// que es referenciada por la FK en la tabla 'film'.
 
 @Entity
 @Table(name = "category")
