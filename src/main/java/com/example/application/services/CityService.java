@@ -1,6 +1,7 @@
 package com.example.application.services;
 
 import com.example.application.data.City;
+import com.example.application.data.Film;
 import com.example.application.repositories.CityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,7 +19,9 @@ public class CityService {
     public CityService(CityRepository cityRepository) {
         this.cityRepository = cityRepository;
     }
-
+    public Page<City> list(Pageable pageable) {
+        return cityRepository.findAll(pageable);
+    }
     public Page<City> findAll(Pageable pageable) {
         return cityRepository.findAll(pageable);
     }

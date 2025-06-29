@@ -249,10 +249,10 @@ public class MasterDetailScreen extends Div implements BeforeEnterObserver {
     private void createButtonLayout(Div editorLayoutDiv) {
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.setClassName("button-layout");
-        newActor.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        newActor.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        print.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
+        print.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         buttonLayout.add(newActor,save, cancel, print);
         editorLayoutDiv.add(buttonLayout);
     }

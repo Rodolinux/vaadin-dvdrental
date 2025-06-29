@@ -2,6 +2,9 @@ package com.example.application.views.masterdetail;
 
 import com.example.application.data.City;
 import com.example.application.data.Country;
+import com.example.application.data.Film;
+import com.example.application.data.CityReportBean;
+import com.example.application.data.FilmReportBean;
 import com.example.application.services.CityService;
 import com.example.application.services.CountryService;
 import com.vaadin.flow.component.UI;
@@ -13,6 +16,7 @@ import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.notification.Notification;
@@ -25,15 +29,28 @@ import com.vaadin.flow.data.binder.Result;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.binder.ValueContext;
 import com.vaadin.flow.data.converter.Converter;
+import com.vaadin.flow.server.StreamResource;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import com.vaadin.flow.router.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
+import java.io.*;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @PageTitle("CRUD de Ciudades")
 @Route(value="cities/:cityId?/:action?(edit)")
@@ -54,6 +71,7 @@ public class CityView extends Div implements BeforeEnterObserver {
     private final Button cancel = new Button("Cancelar");
     private final Button save = new Button("Guardar");
     private final Button newCity = new Button("Nueva");
+    private final Button print = new Button("Imprimir");
 
     private final BeanValidationBinder<City> binder;
 
@@ -175,6 +193,73 @@ public class CityView extends Div implements BeforeEnterObserver {
             UI.getCurrent().navigate(CityView.class);
         });
 
+        print.addClickListener(e -> {
+            try {
+                //1. Cargo el reporte desde la ruta especificada
+                InputStream jrxmlStream = getClass().getResourceAsStream("/reports/city_report.jrxml");
+                if (jrxmlStream == null) {
+                    throw new RuntimeException("No encontré el reporte en  /reports/city_report.jrxml.");
+                }
+
+                //2. Compilar el reporte. Recordar que este paso se puede evitar precompilando el reporte como .jasper en Jasper Studio
+                System.out.println("Cargando archivo JRXML ...");
+                System.out.println("Compilar reporte...");
+                JasperReport jasperReport;
+                try {
+                    jasperReport = JasperCompileManager.compileReport(jrxmlStream);
+                    System.out.println("Reporte compilado exitosamente.");
+                } catch (Exception compileEx) {
+                    System.err.println("Error de compilación : " + compileEx.getMessage());
+                    throw new RuntimeException("Compilación de reporte fallida", compileEx);
+                }
+                //3. Hago un wrapping a la clase Actor para resolver un detalle con las fechas con el que jasper se pone muy quisquilloso
+                List<City> cities = cityService.list(Pageable.unpaged()).getContent();
+                List<CityReportBean> reportBeans = cities.stream()
+                        .map(CityReportBean::new)
+                        .collect(Collectors.toList());
+                System.out.println("Actores para el reporte " + reportBeans.size());
+
+                //4. Establezo el datasource que voy a compilar y cargo un par de parámetros
+                JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(reportBeans);
+                HashMap<String, Object> parameters = new HashMap<>();
+                parameters.put("Creado por", "Vaadin DVDRental App");
+
+                //5. Lleno el reporte usando el archivo que cargué + datasource+ parámetros
+                System.out.println("Llenando el reporte...");
+                JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+                System.out.println("Reporte llenado exitosamente.");
+
+                //6. Genero una salida binaria para exportar el PDF
+                System.out.println("Exportando a PDF...");
+                ByteArrayOutputStream pdfOutputStream = new ByteArrayOutputStream();
+                JasperExportManager.exportReportToPdfStream(jasperPrint, pdfOutputStream);
+                System.out.println("Tamaño del PDF: " + pdfOutputStream.size() + " bytes.");
+
+                try (FileOutputStream fos = new FileOutputStream("actor_report_debug.pdf")) {
+                    pdfOutputStream.writeTo(fos);
+                    System.out.println("PDF grabado a  actor_report_debug.pdf.");
+                } catch (IOException ex) {
+                    System.err.println("Error grabando debug PDF: " + ex.getMessage());
+                }
+
+                //7. Mando el PDF al browser. Con CallJsFunction hago que vaadin cliquee en un enlace que se crea para descargar el archivo
+                String reportFileName = "actor_report_" + System.currentTimeMillis() + ".pdf";
+                StreamResource resource = new StreamResource(reportFileName, () -> new ByteArrayInputStream(pdfOutputStream.toByteArray()));
+                resource.setContentType("application/pdf");
+                Anchor downloadLink = new Anchor(resource, "");
+                add(downloadLink);
+                downloadLink.getElement().callJsFunction("click");
+                UI.getCurrent().getPage().executeJs(
+                        "setTimeout(() => arguments[0].remove(), 1000)", downloadLink.getElement());
+
+                Notification.show("Reporte PDF generado y descargado.", 3000, Notification.Position.MIDDLE);
+
+            } catch (Exception exception) {
+                exception.printStackTrace();
+                Notification.show("Error al generar el reporte " + exception.getMessage(), 5000, Notification.Position.MIDDLE);
+            }
+        });
+
     }
 
 
@@ -232,7 +317,8 @@ public class CityView extends Div implements BeforeEnterObserver {
         newCity.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        buttonLayout.add(newCity, save, cancel);
+        print.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        buttonLayout.add(newCity, save, print, cancel);
         editorLayoutDiv.add(buttonLayout);
     }
 
