@@ -52,6 +52,14 @@ public class FilmService {
     }
 
     /**
+     * Obtiene todas las películas.
+     * @return Una lista de todas las películas.
+     */
+    public List<Film> listAllFilms() {
+        return filmRepository.findAll();
+    }
+
+    /**
      * Obtiene una película por su ID.
      * @param id El ID de la película.
      * @return Un Optional que contiene la película si se encuentra, o vacío si no.
