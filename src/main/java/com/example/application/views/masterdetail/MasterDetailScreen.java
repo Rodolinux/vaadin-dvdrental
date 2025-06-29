@@ -62,6 +62,7 @@ public class MasterDetailScreen extends Div implements BeforeEnterObserver {
     private TextField firstName;
     private TextField lastName;
 
+    private final Button newActor = new Button("Nuevo");
     private final Button cancel = new Button("Cancelar");
     private final Button save = new Button("Guardar");
     private final Button print = new Button("Imprimir");
@@ -108,6 +109,13 @@ public class MasterDetailScreen extends Div implements BeforeEnterObserver {
 
         binder.bindInstanceFields(this);
 
+
+        newActor.addClickListener(event -> {
+            clearForm();
+            refreshGrid();
+            UI.getCurrent().navigate(MasterDetailScreen.class);
+
+        });
         cancel.addClickListener(e -> {
             clearForm();
             refreshGrid();
@@ -241,10 +249,11 @@ public class MasterDetailScreen extends Div implements BeforeEnterObserver {
     private void createButtonLayout(Div editorLayoutDiv) {
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.setClassName("button-layout");
+        newActor.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         print.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
-        buttonLayout.add(save, cancel, print);
+        buttonLayout.add(newActor,save, cancel, print);
         editorLayoutDiv.add(buttonLayout);
     }
 
