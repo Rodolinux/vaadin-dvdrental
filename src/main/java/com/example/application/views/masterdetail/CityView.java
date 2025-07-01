@@ -3,6 +3,7 @@ package com.example.application.views.masterdetail;
 import com.example.application.data.entity.City;
 import com.example.application.data.entity.Country;
 import com.example.application.data.reportbean.CityReportBean;
+import com.example.application.helpers.PrintReportHelper;
 import com.example.application.services.CityService;
 import com.example.application.services.CountryService;
 import com.vaadin.flow.component.UI;
@@ -39,6 +40,7 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import java.io.*;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -115,7 +117,7 @@ public class CityView extends Div implements BeforeEnterObserver {
             return cityService.findAll(pageable).stream();
         });
 
-        grid.setAllRowsVisible(true);
+       // grid.setAllRowsVisible(true);
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_ROW_STRIPES);
 
         grid.asSingleSelect().addValueChangeListener(e -> {
@@ -190,6 +192,21 @@ public class CityView extends Div implements BeforeEnterObserver {
         });
 
         print.addClickListener(e -> {
+            List<City> cities = cityService.list(Pageable.unpaged()).getContent();
+            List<CityReportBean> beans = cities.stream().
+                    map(CityReportBean::new)
+                    .collect(Collectors.toList());
+
+            Map<String, Object> params = new HashMap<>();
+            params.put("Creado por", "Vaadin DVDRental App");
+
+            PrintReportHelper.generateAndDownloadReport(
+                 "/reports/city_report.jrxml",
+                 beans,
+                 params,
+                 "city_report"
+            );
+            /*
             try {
                 //1. Cargo el reporte desde la ruta especificada
                 InputStream jrxmlStream = getClass().getResourceAsStream("/reports/city_report.jrxml");
@@ -253,7 +270,7 @@ public class CityView extends Div implements BeforeEnterObserver {
             } catch (Exception exception) {
                 exception.printStackTrace();
                 Notification.show("Error al generar el reporte " + exception.getMessage(), 5000, Notification.Position.MIDDLE);
-            }
+            }*/
         });
 
     }

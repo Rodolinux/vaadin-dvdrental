@@ -1,9 +1,12 @@
 package com.example.application.views.masterdetail;
 
 import com.example.application.data.*;
+import com.example.application.data.entity.City;
 import com.example.application.data.entity.Film;
 import com.example.application.data.entity.Language;
+import com.example.application.data.reportbean.CityReportBean;
 import com.example.application.data.reportbean.FilmReportBean;
+import com.example.application.helpers.PrintReportHelper;
 import com.example.application.services.FilmService;
 import com.example.application.services.LanguageService; // Importar LanguageService
 import com.vaadin.flow.component.UI;
@@ -329,6 +332,23 @@ public class FilmView extends Div implements BeforeEnterObserver {
         // Comentado JasperReports, descomentar si es necesario
 
         print.addClickListener(e -> {
+            List<Film> films = filmService.list(Pageable.unpaged()).getContent();
+            List<FilmReportBean> beans = films.stream().
+                    map(FilmReportBean::new)
+                    .collect(Collectors.toList());
+
+            Map<String, Object> params = new HashMap<>();
+            params.put("Creado por", "Vaadin DVDRental App");
+
+            PrintReportHelper.generateAndDownloadReport(
+                    "/reports/film_report.jrxml",
+                    beans,
+                    params,
+                    "film_report"
+            );
+
+
+            /*
             try {
                 //1. Cargo el reporte desde la ruta especificada
                 InputStream jrxmlStream = getClass().getResourceAsStream("/reports/film_report.jrxml");
@@ -393,6 +413,8 @@ public class FilmView extends Div implements BeforeEnterObserver {
                 exception.printStackTrace();
                 Notification.show("Error al generar el reporte " + exception.getMessage(), 5000, Notification.Position.MIDDLE);
             }
+
+             */
         });
     }
 

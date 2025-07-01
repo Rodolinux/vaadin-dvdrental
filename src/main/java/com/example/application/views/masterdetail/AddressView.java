@@ -2,8 +2,11 @@ package com.example.application.views.masterdetail;
 
 import com.example.application.data.entity.Address;
 import com.example.application.data.entity.City;
+import com.example.application.data.entity.Film;
 import com.example.application.data.reportbean.AddressReportBean;
 import com.example.application.data.reportbean.CityReportBean;
+import com.example.application.data.reportbean.FilmReportBean;
+import com.example.application.helpers.PrintReportHelper;
 import com.example.application.services.AddressService;
 import com.example.application.services.CityService;
 import com.vaadin.flow.component.UI;
@@ -41,6 +44,7 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import java.io.*;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -191,6 +195,21 @@ public class AddressView extends Div implements BeforeEnterObserver {
         });
 
         print.addClickListener(e -> {
+            List<Address> addresses = addressService.list(Pageable.unpaged()).getContent();
+            List<AddressReportBean> beans = addresses.stream().
+                    map(AddressReportBean::new)
+                    .collect(Collectors.toList());
+
+            Map<String, Object> params = new HashMap<>();
+            params.put("Creado por", "Vaadin DVDRental App");
+
+            PrintReportHelper.generateAndDownloadReport(
+                    "/reports/address_report.jrxml",
+                    beans,
+                    params,
+                    "address_report"
+            );
+            /*
             try {
                 //1. Cargo el reporte desde la ruta especificada
                 InputStream jrxmlStream = getClass().getResourceAsStream("/reports/address_report.jrxml");
@@ -255,7 +274,11 @@ public class AddressView extends Div implements BeforeEnterObserver {
                 exception.printStackTrace();
                 Notification.show("Error al generar el reporte " + exception.getMessage(), 5000, Notification.Position.MIDDLE);
             }
+
+             */
         });
+
+
     }
 
     // Clase estática anidada para la conversión de String a Integer (reutilizada de CityView)

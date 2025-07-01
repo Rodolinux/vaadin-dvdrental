@@ -1,7 +1,10 @@
 package com.example.application.views.masterdetail;
 
 import com.example.application.data.entity.Actor;
+import com.example.application.data.entity.City;
 import com.example.application.data.reportbean.ActorReportBean;
+import com.example.application.data.reportbean.CityReportBean;
+import com.example.application.helpers.PrintReportHelper;
 import com.example.application.services.ActorService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -35,6 +38,7 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import org.springframework.data.domain.Pageable;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 import java.io.ByteArrayInputStream;
@@ -44,6 +48,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -143,6 +148,23 @@ public class ActorView extends Div implements BeforeEnterObserver {
         });
 
         print.addClickListener(e -> {
+            List<Actor> actors = actorService.list(Pageable.unpaged()).getContent();
+            List<ActorReportBean> beans = actors.stream().
+                    map(ActorReportBean::new)
+                    .collect(Collectors.toList());
+
+            Map<String, Object> params = new HashMap<>();
+            params.put("Creado por", "Vaadin DVDRental App");
+
+            PrintReportHelper.generateAndDownloadReport(
+                    "/reports/actor_report.jrxml",
+                    beans,
+                    params,
+                    "actor_report"
+            );
+
+
+            /*
             try {
                 //1. Cargo el reporte desde la ruta especificada
                 InputStream jrxmlStream = getClass().getResourceAsStream("/reports/actor_report.jrxml");
@@ -207,6 +229,7 @@ public class ActorView extends Div implements BeforeEnterObserver {
                 exception.printStackTrace();
                 Notification.show("Error al generar el reporte " + exception.getMessage(), 5000, Notification.Position.MIDDLE);
             }
+            */
         });
     }
 
