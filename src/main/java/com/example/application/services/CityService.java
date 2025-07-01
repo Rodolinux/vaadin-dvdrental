@@ -1,7 +1,6 @@
 package com.example.application.services;
 
-import com.example.application.data.City;
-import com.example.application.data.Film;
+import com.example.application.data.entity.City;
 import com.example.application.repositories.CityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

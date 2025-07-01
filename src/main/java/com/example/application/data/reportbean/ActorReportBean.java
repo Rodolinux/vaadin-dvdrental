@@ -1,7 +1,8 @@
 
-        package com.example.application.data;
+        package com.example.application.data.reportbean;
 
-import java.time.LocalDate;
+import com.example.application.data.entity.Actor;
+
 import java.time.LocalDateTime;
 
 public class ActorReportBean {

@@ -1,5 +1,5 @@
 // Language.java (Clase de entidad para la tabla 'language' - necesaria para la FK)
-package com.example.application.data;
+package com.example.application.data.entity;
 
 import jakarta.persistence.*;
 

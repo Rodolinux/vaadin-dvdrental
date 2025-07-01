@@ -1,6 +1,6 @@
 package com.example.application.services;
 
-import com.example.application.data.Film;
+import com.example.application.data.entity.Film;
 import com.example.application.repositories.FilmRepository;
 import com.example.application.data.MpaaRating;
 

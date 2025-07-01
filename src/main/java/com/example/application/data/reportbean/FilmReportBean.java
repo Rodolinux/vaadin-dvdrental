@@ -1,4 +1,6 @@
-package com.example.application.data;
+package com.example.application.data.reportbean;
+
+import com.example.application.data.entity.Film;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

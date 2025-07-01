@@ -1,6 +1,9 @@
 package com.example.application.views.masterdetail;
 
 import com.example.application.data.*;
+import com.example.application.data.entity.Film;
+import com.example.application.data.entity.Language;
+import com.example.application.data.reportbean.FilmReportBean;
 import com.example.application.services.FilmService;
 import com.example.application.services.LanguageService; // Importar LanguageService
 import com.vaadin.flow.component.UI;
@@ -25,13 +28,10 @@ import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
-import com.vaadin.flow.data.binder.Binder; // Importar Binder
 import com.vaadin.flow.data.binder.Result;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.binder.ValueContext;
 import com.vaadin.flow.data.converter.Converter; // Importar Converter
-import com.vaadin.flow.data.provider.DataProvider;
-import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Menu;
@@ -39,7 +39,6 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.server.StreamResource;
-import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -121,15 +120,15 @@ public class FilmView extends Div implements BeforeEnterObserver {
         add(splitLayout);
 
         // Configuración de las columnas del Grid
-        grid.addColumn("filmId").setAutoWidth(true).setSortable(true);
-        grid.addColumn("title").setAutoWidth(true).setSortable(true);
-        grid.addColumn("releaseYear").setAutoWidth(true).setSortable(true);
-        grid.addColumn("rentalDuration").setAutoWidth(true).setSortable(true);
-        grid.addColumn("rentalRate").setAutoWidth(true).setSortable(true);
+        grid.addColumn("filmId").setAutoWidth(true).setSortable(true).setResizable(true);
+        grid.addColumn("title").setAutoWidth(true).setSortable(true).setResizable(true);
+        grid.addColumn("releaseYear").setAutoWidth(true).setSortable(true).setResizable(true);
+        grid.addColumn("rentalDuration").setAutoWidth(true).setSortable(true).setResizable(true);
+        grid.addColumn("rentalRate").setAutoWidth(true).setSortable(true).setResizable(true);
         grid.addColumn(film -> film.getLanguage() != null ? film.getLanguage().getName() : "N/A")
-                .setHeader("Language").setAutoWidth(true).setSortable(true);
-        grid.addColumn("rating").setAutoWidth(true).setSortable(true);
-        grid.addColumn("lastUpdate").setAutoWidth(true).setSortable(true); // Se muestra la fecha y hora de la última actualización
+                .setHeader("Language").setAutoWidth(true).setSortable(true).setResizable(true);
+        grid.addColumn("rating").setAutoWidth(true).setSortable(true).setResizable(true);
+        grid.addColumn("lastUpdate").setAutoWidth(true).setSortable(true).setResizable(true); // Se muestra la fecha y hora de la última actualización
 
         // Ocultar otras columnas que no necesitamos mostrar en el Grid o que se manejan en el formulario
         grid.getColumns().forEach(col -> {
@@ -348,12 +347,12 @@ public class FilmView extends Div implements BeforeEnterObserver {
                     System.err.println("Error de compilación : " + compileEx.getMessage());
                     throw new RuntimeException("Compilación de reporte fallida", compileEx);
                 }
-                //3. Hago un wrapping a la clase Actor para resolver un detalle con las fechas con el que jasper se pone muy quisquilloso
+                //3. Hago un wrapping a la clase Film para resolver un detalle con las fechas con el que jasper se pone muy quisquilloso
                 List<Film> films = filmService.list(Pageable.unpaged()).getContent();
                 List<FilmReportBean> reportBeans = films.stream()
                         .map(FilmReportBean::new)
                         .collect(Collectors.toList());
-                System.out.println("Actores para el reporte " + reportBeans.size());
+                System.out.println("Films para el reporte " + reportBeans.size());
 
                 //4. Establezo el datasource que voy a compilar y cargo un par de parámetros
                 JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(reportBeans);
@@ -371,15 +370,15 @@ public class FilmView extends Div implements BeforeEnterObserver {
                 JasperExportManager.exportReportToPdfStream(jasperPrint, pdfOutputStream);
                 System.out.println("Tamaño del PDF: " + pdfOutputStream.size() + " bytes.");
 
-                try (FileOutputStream fos = new FileOutputStream("actor_report_debug.pdf")) {
+                try (FileOutputStream fos = new FileOutputStream("film_report_debug.pdf")) {
                     pdfOutputStream.writeTo(fos);
-                    System.out.println("PDF grabado a  actor_report_debug.pdf.");
+                    System.out.println("PDF grabado a  film_report_debug.pdf.");
                 } catch (IOException ex) {
                     System.err.println("Error grabando debug PDF: " + ex.getMessage());
                 }
 
                 //7. Mando el PDF al browser. Con CallJsFunction hago que vaadin cliquee en un enlace que se crea para descargar el archivo
-                String reportFileName = "actor_report_" + System.currentTimeMillis() + ".pdf";
+                String reportFileName = "film_report_" + System.currentTimeMillis() + ".pdf";
                 StreamResource resource = new StreamResource(reportFileName, () -> new ByteArrayInputStream(pdfOutputStream.toByteArray()));
                 resource.setContentType("application/pdf");
                 Anchor downloadLink = new Anchor(resource, "");

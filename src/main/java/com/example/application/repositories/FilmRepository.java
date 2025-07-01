@@ -1,7 +1,7 @@
 // FilmRepository.java
 package com.example.application.repositories;
 
-import com.example.application.data.Film;
+import com.example.application.data.entity.Film;
 import com.example.application.data.MpaaRating;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

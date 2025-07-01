@@ -1,6 +1,6 @@
 package com.example.application.services;
 
-import com.example.application.data.Actor;
+import com.example.application.data.entity.Actor;
 import com.example.application.repositories.ActorRepository;
 
 import org.springframework.data.domain.Page;

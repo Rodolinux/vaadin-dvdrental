@@ -1,4 +1,6 @@
-package com.example.application.data;
+package com.example.application.data.reportbean;
+
+import com.example.application.data.entity.City;
 
 import java.time.LocalDateTime;
 

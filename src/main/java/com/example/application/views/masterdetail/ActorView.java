@@ -1,7 +1,7 @@
 package com.example.application.views.masterdetail;
 
-import com.example.application.data.Actor;
-import com.example.application.data.ActorReportBean;
+import com.example.application.data.entity.Actor;
+import com.example.application.data.reportbean.ActorReportBean;
 import com.example.application.services.ActorService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -52,7 +52,7 @@ import java.util.stream.Collectors;
 @Menu(order = 0, icon = "las la-columns")
 @RouteAlias("")
 @Uses(Icon.class)
-public class MasterDetailScreen extends Div implements BeforeEnterObserver {
+public class ActorView extends Div implements BeforeEnterObserver {
 
     private final String ACTOR_ID = "actorId";
     private final String ACTOR_EDIT_ROUTE_TEMPLATE = "/%s/edit";
@@ -73,7 +73,7 @@ public class MasterDetailScreen extends Div implements BeforeEnterObserver {
 
     private final ActorService actorService;
 
-    public MasterDetailScreen(ActorService actorService) {
+    public ActorView(ActorService actorService) {
         this.actorService = actorService;
         addClassNames("master-detail-screen");
 
@@ -86,9 +86,9 @@ public class MasterDetailScreen extends Div implements BeforeEnterObserver {
         add(splitLayout);
 
 
-        grid.addColumn("actorId").setAutoWidth(true);
-        grid.addColumn("firstName").setAutoWidth(true);
-        grid.addColumn("lastName").setAutoWidth(true);
+        grid.addColumn("actorId").setAutoWidth(true).setSortable(true).setResizable(true);
+        grid.addColumn("firstName").setAutoWidth(true).setSortable(true).setResizable(true);
+        grid.addColumn("lastName").setAutoWidth(true).setSortable(true).setResizable(true);
 
         grid.setItems(query -> actorService.list(VaadinSpringDataHelpers.toSpringPageRequest(query)).stream());
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
@@ -99,7 +99,7 @@ public class MasterDetailScreen extends Div implements BeforeEnterObserver {
                 UI.getCurrent().navigate(String.format(ACTOR_EDIT_ROUTE_TEMPLATE, event.getValue().getId()));
             } else {
                 clearForm();
-                UI.getCurrent().navigate(MasterDetailScreen.class);
+                UI.getCurrent().navigate(ActorView.class);
             }
         });
 
@@ -113,7 +113,7 @@ public class MasterDetailScreen extends Div implements BeforeEnterObserver {
         newActor.addClickListener(event -> {
             clearForm();
             refreshGrid();
-            UI.getCurrent().navigate(MasterDetailScreen.class);
+            UI.getCurrent().navigate(ActorView.class);
 
         });
         cancel.addClickListener(e -> {
@@ -131,7 +131,7 @@ public class MasterDetailScreen extends Div implements BeforeEnterObserver {
                 clearForm();
                 refreshGrid();
                 Notification.show("Datos actualizados");
-                UI.getCurrent().navigate(MasterDetailScreen.class);
+                UI.getCurrent().navigate(ActorView.class);
             } catch (ObjectOptimisticLockingFailureException exception) {
                 Notification n = Notification.show(
                         "Error al actualizar los datos. Alguien más ha actualizado el registro mientras realizabas cambios.");
@@ -222,7 +222,7 @@ public class MasterDetailScreen extends Div implements BeforeEnterObserver {
                         String.format("El actor requerido no se encontró, ID = %s", actorId.get()), 3000,
                         Notification.Position.BOTTOM_START);
                 refreshGrid();
-                event.forwardTo(MasterDetailScreen.class);
+                event.forwardTo(ActorView.class);
             }
         }
     }

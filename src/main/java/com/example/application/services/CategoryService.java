@@ -1,6 +1,6 @@
 package com.example.application.services;
 
-import com.example.application.data.Category;
+import com.example.application.data.entity.Category;
 import com.example.application.repositories.CategoryRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;

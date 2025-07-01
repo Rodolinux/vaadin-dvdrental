@@ -1,6 +1,7 @@
-package com.example.application.data;
+package com.example.application.data.entity;
 import com.example.application.converters.MpaaRatingConverter;
 import com.example.application.converters.StringListConverter;
+import com.example.application.data.MpaaRating;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
